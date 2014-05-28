@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+#
+# Disables vhosts for nginx
+# 
+# Created by Caius Durling on 10-05-01
+# MIT License - see readme.md
+#
+# Exit codes:
+#  0 - Removed symlink
+#  1 - Error running script - No arguments passed
+#  2 - Site is already disabled
+#
+if [[ -z "$1" ]]; then
+  echo "Usage: ngen <site>"
+  echo "Disables nginx vhosts"
+  echo "NB: Remember to reload nginx after running"
+  exit 1
+fi
+
+SITES_AVAILABLE="/opt/nginx/conf/sites-available"
+SITES_ENABLED="/opt/nginx/conf/sites-enabled"
+
+FILE="$SITES_ENABLED/$1"
+echo "$FILE"
+
+if [[ ! -L "$FILE" ]]; then
+  echo "$1 isn't enabled"
+  exit 2
+fi
+
+sudo rm "$FILE"
+echo "Disabled '$1'"
+

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+#
+# Enables vhosts for nginx
+# 
+# Created by Caius Durling on 10-05-01  
+# MIT License - see readme.md
+#
+# Exit codes:
+#  0 - Created symlink
+#  1 - Error running script - No arguments passed or couldn't find config file
+#  2 - Site is already enabled
+#
+if [[ -z "$1" ]]; then
+  echo "Usage: ngen <site>"
+  echo "Enables nginx vhosts"
+  echo "NB: Remember to reload nginx after running"
+  exit 1
+fi
+
+SITES_AVAILABLE="/opt/nginx/conf/sites-available"
+SITES_ENABLED="/opt/nginx/conf/sites-enabled"
+
+FILE="$SITES_ENABLED/$1"
+echo "$FILE"
+
+if [[ -L "$FILE" ]]; then
+  echo "$1 is already enabled"
+  exit 2
+elif [[ ! -e "$SITES_AVAILABLE/$1" ]]; then
+  echo "Can't find the config for $1."
+  exit 1
+fi
+
+sudo ln -s "$SITES_AVAILABLE/$1" "$FILE"
+echo "Enabled '$1'"
